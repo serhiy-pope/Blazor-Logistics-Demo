@@ -1,0 +1,42 @@
+﻿@page "/shipments/{Id:guid}"
+@rendermode InteractiveServer
+@inject IShipmentService ShipmentService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Shipment Details</PageTitle>
+
+<h1>Shipment Details</h1>
+
+@if (_shipment is null)
+{
+    <p>Shipment not found.</p>
+}
+else
+{
+    <div class="panel">
+        <p><strong>Tracking Number:</strong> @_shipment.TrackingNumber</p>
+        <p><strong>Customer:</strong> @_shipment.CustomerName</p>
+        <p><strong>Origin:</strong> @_shipment.Origin</p>
+        <p><strong>Destination:</strong> @_shipment.Destination</p>
+        <p><strong>Carrier:</strong> @_shipment.Carrier</p>
+        <p><strong>Weight:</strong> @_shipment.WeightKg kg</p>
+        <p><strong>Status:</strong> @_shipment.Status</p>
+        <p><strong>Created:</strong> @_shipment.CreatedAtUtc.ToLocalTime()</p>
+    </div>
+}
+
+<button class="btn btn-secondary" @onclick="Back">Back</button>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Shipment? _shipment;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _shipment = await ShipmentService.GetByIdAsync(Id);
+    }
+
+    private void Back() => NavigationManager.NavigateTo("/shipments");
+}

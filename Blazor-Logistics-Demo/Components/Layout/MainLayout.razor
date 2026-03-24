@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Logistics Demo</h3>
+        </div>
+
+        <nav class="nav-links">
+            <NavLink href="/" Match="NavLinkMatch.All">Dashboard</NavLink>
+            <NavLink href="/shipments">Shipments</NavLink>
+            <NavLink href="/shipments/create">Create Shipment</NavLink>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="top-row px-4">
+            <h4>Blazor Logistics Demo</h4>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

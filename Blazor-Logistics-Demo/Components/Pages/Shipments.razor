@@ -1,0 +1,90 @@
+﻿@page "/shipments"
+@rendermode InteractiveServer
+@inject IShipmentService ShipmentService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Shipments</PageTitle>
+
+<h1>Shipments</h1>
+
+<div class="toolbar">
+    <input class="form-control"
+           placeholder="Search by tracking number or customer"
+           @bind="_searchTerm" />
+
+    <select class="form-control" @bind="_selectedStatus">
+        <option value="">All statuses</option>
+        @foreach (var status in Enum.GetNames<ShipmentStatus>())
+        {
+            <option value="@status">@status</option>
+        }
+    </select>
+
+    <button class="btn btn-primary" @onclick="GoToCreate">
+        Create Shipment
+    </button>
+</div>
+
+@if (_shipments is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tracking #</th>
+                <th>Customer</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Carrier</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var shipment in FilteredShipments)
+            {
+                <tr>
+                    <td>@shipment.TrackingNumber</td>
+                    <td>@shipment.CustomerName</td>
+                    <td>@shipment.Origin</td>
+                    <td>@shipment.Destination</td>
+                    <td>@shipment.Carrier</td>
+                    <td>@shipment.Status</td>
+                    <td>
+                        <button class="btn btn-link" @onclick="() => OpenDetails(shipment.Id)">
+                            Details
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IReadOnlyList<Shipment>? _shipments;
+    private string _searchTerm = string.Empty;
+    private string _selectedStatus = string.Empty;
+
+    private IEnumerable<Shipment> FilteredShipments =>
+        (_shipments ?? [])
+        .Where(x =>
+            string.IsNullOrWhiteSpace(_searchTerm) ||
+            x.TrackingNumber.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            x.CustomerName.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase))
+        .Where(x =>
+            string.IsNullOrWhiteSpace(_selectedStatus) ||
+            x.Status.ToString().Equals(_selectedStatus, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        _shipments = await ShipmentService.GetAllAsync();
+    }
+
+    private void OpenDetails(Guid id) => NavigationManager.NavigateTo($"/shipments/{id}");
+
+    private void GoToCreate() => NavigationManager.NavigateTo("/shipments/create");
+}

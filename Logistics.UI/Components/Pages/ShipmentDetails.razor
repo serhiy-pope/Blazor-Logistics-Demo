@@ -1,0 +1,78 @@
+@page "/shipments/{Id:guid}"
+@inject IShipmentService ShipmentService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Shipment Details</PageTitle>
+
+<div class="page-header">
+    <h1>Shipment Details</h1>
+    <p class="page-subtitle">
+        @(_shipment is null ? "This shipment could not be found." : _shipment.TrackingNumber)
+    </p>
+</div>
+
+@if (_shipment is null)
+{
+    <div class="panel">
+        <div class="empty-state">
+            <Icon Name="inbox" Size="30" />
+            <p>Shipment not found.</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="panel panel--detail">
+        <div class="panel-header">
+            <h3>@_shipment.TrackingNumber</h3>
+            <StatusBadge Status="_shipment.Status" />
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Customer</div>
+                <div class="detail-value">@_shipment.CustomerName</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Carrier</div>
+                <div class="detail-value">@_shipment.Carrier</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Origin</div>
+                <div class="detail-value">@_shipment.Origin</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Destination</div>
+                <div class="detail-value">@_shipment.Destination</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Weight</div>
+                <div class="detail-value">@_shipment.WeightKg kg</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Created</div>
+                <div class="detail-value">@_shipment.CreatedAtUtc.ToLocalTime().ToString("g")</div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="actions page-actions">
+    <button class="btn btn-secondary" @onclick="Back">
+        <Icon Name="arrow-left" Size="16" /> Back to shipments
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Shipment? _shipment;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _shipment = await ShipmentService.GetByIdAsync(Id);
+    }
+
+    private void Back() => NavigationManager.NavigateTo("/shipments");
+}

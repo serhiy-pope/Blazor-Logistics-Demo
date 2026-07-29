@@ -1,0 +1,12 @@
+<span class="badge badge--@Status.ToString().ToLowerInvariant()">@Label</span>
+
+@code {
+    [Parameter, EditorRequired]
+    public ShipmentStatus Status { get; set; }
+
+    private string Label => Status switch
+    {
+        ShipmentStatus.InTransit => "In Transit",
+        _ => Status.ToString()
+    };
+}

@@ -1,16 +1,23 @@
-﻿@page "/shipments"
+@page "/shipments"
 @rendermode InteractiveServer
 @inject IShipmentService ShipmentService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Shipments</PageTitle>
 
-<h1>Shipments</h1>
+<div class="page-header">
+    <h1>Shipments</h1>
+    <p class="page-subtitle">Search, filter and inspect individual shipments.</p>
+</div>
 
 <div class="toolbar">
-    <input class="form-control"
-           placeholder="Search by tracking number or customer"
-           @bind="_searchTerm" />
+    <div class="search">
+        <Icon Name="search" Size="16" />
+        <input class="form-control"
+               placeholder="Search by tracking number or customer"
+               @bind="_searchTerm"
+               @bind:event="oninput" />
+    </div>
 
     <select class="form-control" @bind="_selectedStatus">
         <option value="">All statuses</option>
@@ -21,47 +28,61 @@
     </select>
 
     <button class="btn btn-primary" @onclick="GoToCreate">
-        Create Shipment
+        <Icon Name="plus" Size="16" /> Create Shipment
     </button>
 </div>
 
 @if (_shipments is null)
 {
-    <p>Loading...</p>
+    <div class="loading">Loading shipments...</div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Tracking #</th>
-                <th>Customer</th>
-                <th>Origin</th>
-                <th>Destination</th>
-                <th>Carrier</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var shipment in FilteredShipments)
-            {
-                <tr>
-                    <td>@shipment.TrackingNumber</td>
-                    <td>@shipment.CustomerName</td>
-                    <td>@shipment.Origin</td>
-                    <td>@shipment.Destination</td>
-                    <td>@shipment.Carrier</td>
-                    <td>@shipment.Status</td>
-                    <td>
-                        <button class="btn btn-link" @onclick="() => OpenDetails(shipment.Id)">
-                            Details
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="panel">
+        @if (!FilteredShipments.Any())
+        {
+            <div class="empty-state">
+                <Icon Name="inbox" Size="30" />
+                <p>No shipments match your filters.</p>
+            </div>
+        }
+        else
+        {
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tracking #</th>
+                        <th>Customer</th>
+                        <th>Origin</th>
+                        <th>Destination</th>
+                        <th>Carrier</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var shipment in FilteredShipments)
+                    {
+                        <tr>
+                            <td class="cell-mono">@shipment.TrackingNumber</td>
+                            <td>@shipment.CustomerName</td>
+                            <td>@shipment.Origin</td>
+                            <td>@shipment.Destination</td>
+                            <td class="text-muted">@shipment.Carrier</td>
+                            <td><StatusBadge Status="shipment.Status" /></td>
+                            <td class="cell-actions">
+                                <button class="btn btn-link" @onclick="() => OpenDetails(shipment.Id)">
+                                    Details
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
 }
 
 @code {

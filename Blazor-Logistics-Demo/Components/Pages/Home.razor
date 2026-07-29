@@ -1,48 +1,66 @@
-﻿@page "/"
+@page "/"
 @rendermode InteractiveServer
 @inject IShipmentService ShipmentService
 
 <PageTitle>Dashboard</PageTitle>
 
-<h1>Logistics Dashboard</h1>
+<div class="page-header">
+    <h1>Logistics Dashboard</h1>
+    <p class="page-subtitle">Overview of every shipment currently in the system.</p>
+</div>
 
 @if (_shipments is null)
 {
-    <p>Loading...</p>
+    <div class="loading">Loading shipments...</div>
 }
 else
 {
     <div class="kpi-grid">
-        <KpiCard Title="Total Shipments" Value="@_shipments.Count.ToString()" />
-        <KpiCard Title="Pending" Value="@_shipments.Count(x => x.Status == ShipmentStatus.Pending).ToString()" />
-        <KpiCard Title="In Transit" Value="@_shipments.Count(x => x.Status == ShipmentStatus.InTransit).ToString()" />
-        <KpiCard Title="Delivered" Value="@_shipments.Count(x => x.Status == ShipmentStatus.Delivered).ToString()" />
+        <KpiCard Title="Total Shipments" IconName="package"
+                 Value="@_shipments.Count.ToString()" />
+        <KpiCard Title="Pending" IconName="clock" Variant="pending"
+                 Value="@_shipments.Count(x => x.Status == ShipmentStatus.Pending).ToString()" />
+        <KpiCard Title="In Transit" IconName="truck" Variant="transit"
+                 Value="@_shipments.Count(x => x.Status == ShipmentStatus.InTransit).ToString()" />
+        <KpiCard Title="Delivered" IconName="check" Variant="delivered"
+                 Value="@_shipments.Count(x => x.Status == ShipmentStatus.Delivered).ToString()" />
     </div>
 
     <div class="panel">
-        <h3>Recent Shipments</h3>
+        <div class="panel-header">
+            <h3>Recent Shipments</h3>
+            <a href="/shipments">View all</a>
+        </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Tracking #</th>
-                    <th>Customer</th>
-                    <th>Route</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var shipment in _shipments.Take(5))
-                {
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>@shipment.TrackingNumber</td>
-                        <td>@shipment.CustomerName</td>
-                        <td>@shipment.Origin → @shipment.Destination</td>
-                        <td>@shipment.Status</td>
+                        <th>Tracking #</th>
+                        <th>Customer</th>
+                        <th>Route</th>
+                        <th>Status</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var shipment in _shipments.Take(5))
+                    {
+                        <tr>
+                            <td class="cell-mono">@shipment.TrackingNumber</td>
+                            <td>@shipment.CustomerName</td>
+                            <td>
+                                <span class="cell-route">
+                                    <strong>@shipment.Origin</strong>
+                                    <Icon Name="arrow-right" Size="14" />
+                                    <strong>@shipment.Destination</strong>
+                                </span>
+                            </td>
+                            <td><StatusBadge Status="shipment.Status" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }
 

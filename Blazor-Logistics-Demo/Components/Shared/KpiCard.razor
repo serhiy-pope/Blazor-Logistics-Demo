@@ -1,6 +1,15 @@
-﻿<div class="kpi-card">
-    <div class="kpi-title">@Title</div>
-    <div class="kpi-value">@Value</div>
+<div class="@(string.IsNullOrEmpty(Variant) ? "kpi-card" : $"kpi-card kpi-card--{Variant}")">
+    @if (!string.IsNullOrEmpty(IconName))
+    {
+        <div class="kpi-icon">
+            <Icon Name="@IconName" Size="20" />
+        </div>
+    }
+
+    <div>
+        <div class="kpi-title">@Title</div>
+        <div class="kpi-value">@Value</div>
+    </div>
 </div>
 
 @code {
@@ -9,4 +18,12 @@
 
     [Parameter, EditorRequired]
     public string Value { get; set; } = string.Empty;
+
+    /// <summary>Name of an Icon glyph, e.g. "package".</summary>
+    [Parameter]
+    public string? IconName { get; set; }
+
+    /// <summary>Optional accent modifier: "pending", "transit" or "delivered".</summary>
+    [Parameter]
+    public string? Variant { get; set; }
 }

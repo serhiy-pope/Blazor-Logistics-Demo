@@ -1,31 +1,68 @@
-﻿@page "/shipments/{Id:guid}"
+@page "/shipments/{Id:guid}"
 @rendermode InteractiveServer
 @inject IShipmentService ShipmentService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Shipment Details</PageTitle>
 
-<h1>Shipment Details</h1>
+<div class="page-header">
+    <h1>Shipment Details</h1>
+    <p class="page-subtitle">
+        @(_shipment is null ? "This shipment could not be found." : _shipment.TrackingNumber)
+    </p>
+</div>
 
 @if (_shipment is null)
 {
-    <p>Shipment not found.</p>
+    <div class="panel">
+        <div class="empty-state">
+            <Icon Name="inbox" Size="30" />
+            <p>Shipment not found.</p>
+        </div>
+    </div>
 }
 else
 {
-    <div class="panel">
-        <p><strong>Tracking Number:</strong> @_shipment.TrackingNumber</p>
-        <p><strong>Customer:</strong> @_shipment.CustomerName</p>
-        <p><strong>Origin:</strong> @_shipment.Origin</p>
-        <p><strong>Destination:</strong> @_shipment.Destination</p>
-        <p><strong>Carrier:</strong> @_shipment.Carrier</p>
-        <p><strong>Weight:</strong> @_shipment.WeightKg kg</p>
-        <p><strong>Status:</strong> @_shipment.Status</p>
-        <p><strong>Created:</strong> @_shipment.CreatedAtUtc.ToLocalTime()</p>
+    <div class="panel panel--detail">
+        <div class="panel-header">
+            <h3>@_shipment.TrackingNumber</h3>
+            <StatusBadge Status="_shipment.Status" />
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Customer</div>
+                <div class="detail-value">@_shipment.CustomerName</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Carrier</div>
+                <div class="detail-value">@_shipment.Carrier</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Origin</div>
+                <div class="detail-value">@_shipment.Origin</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Destination</div>
+                <div class="detail-value">@_shipment.Destination</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Weight</div>
+                <div class="detail-value">@_shipment.WeightKg kg</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Created</div>
+                <div class="detail-value">@_shipment.CreatedAtUtc.ToLocalTime().ToString("g")</div>
+            </div>
+        </div>
     </div>
 }
 
-<button class="btn btn-secondary" @onclick="Back">Back</button>
+<div class="actions page-actions">
+    <button class="btn btn-secondary" @onclick="Back">
+        <Icon Name="arrow-left" Size="16" /> Back to shipments
+    </button>
+</div>
 
 @code {
     [Parameter]

@@ -1,24 +1,41 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <div class="page">
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h3>Logistics Demo</h3>
+            <div class="sidebar-mark">
+                <Icon Name="package" Size="19" />
+            </div>
+            <div>
+                <p class="sidebar-title">Logistics Demo</p>
+                <p class="sidebar-subtitle">Blazor</p>
+            </div>
         </div>
 
         <nav class="nav-links">
-            <NavLink href="/" Match="NavLinkMatch.All">Dashboard</NavLink>
-            <NavLink href="/shipments">Shipments</NavLink>
-            <NavLink href="/shipments/create">Create Shipment</NavLink>
+            <NavLink href="/" Match="NavLinkMatch.All">
+                <Icon Name="dashboard" /> Dashboard
+            </NavLink>
+            <NavLink href="/shipments">
+                <Icon Name="truck" /> Shipments
+            </NavLink>
+            <NavLink href="/shipments/create">
+                <Icon Name="plus" /> Create Shipment
+            </NavLink>
         </nav>
+
+        <div class="sidebar-footer">
+            Demo data &middot; resets on restart
+        </div>
     </aside>
 
     <main>
-        <div class="top-row px-4">
+        <div class="top-row">
             <h4>Blazor Logistics Demo</h4>
+            <span class="top-row-meta">@DateTime.Now.ToString("dddd, d MMMM yyyy")</span>
         </div>
 
-        <article class="content px-4">
+        <article class="content">
             @Body
         </article>
     </main>

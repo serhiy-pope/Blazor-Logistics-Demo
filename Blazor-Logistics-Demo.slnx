@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="Blazor-Logistics-Demo/Blazor-Logistics-Demo.csproj" />
+  <Project Path="Logistics.Core/Logistics.Core.csproj" />
+  <Project Path="Logistics.UI/Logistics.UI.csproj" />
+  <Project Path="Logistics.Web/Logistics.Web.csproj" />
+  <Project Path="Logistics.Maui/Logistics.Maui.csproj" />
 </Solution>
